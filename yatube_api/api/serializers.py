@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
+from rest_framework.validators import UniqueTogetherValidator
 
-
-from posts.models import Comment, Post
+from posts.models import Comment, Follow, Group, Post, User
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -21,3 +21,25 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Comment
+
+
+class GroupSerializer(serializers.ModelSerializer):
+    # Проверить что нельзя создать две одинаковые группы
+
+    class Meta:
+        fields = '__all__'
+        model = Group
+
+
+class FollowSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(read_only=True, slug_field='username')
+    # Проверить подписку на самого себя и дубль подписки
+
+    class Meta:
+        fields = '__all__'
+        model = Follow
+        validators = [
+            UniqueTogetherValidator(
+                User.objects.all(),
+                ['user', 'following'])
+        ]
