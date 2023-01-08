@@ -1,12 +1,15 @@
+from posts.models import Comment, Follow, Group, Post, User
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueTogetherValidator
 
-from posts.models import Comment, Follow, Group, Post, User
-
 
 class PostSerializer(serializers.ModelSerializer):
-    author = SlugRelatedField(slug_field='username', read_only=True)
+    author = SlugRelatedField(
+        slug_field='username',
+        read_only=True,
+        default=serializers.CurrentUserDefault()
+    )
 
     class Meta:
         fields = '__all__'
@@ -15,8 +18,11 @@ class PostSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
-        read_only=True, slug_field='username'
+        read_only=True,
+        slug_field='username',
+        default=serializers.CurrentUserDefault()
     )
+    post = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         fields = '__all__'
@@ -24,7 +30,6 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class GroupSerializer(serializers.ModelSerializer):
-    # Проверить что нельзя создать две одинаковые группы
 
     class Meta:
         fields = '__all__'
@@ -32,14 +37,33 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class FollowSerializer(serializers.ModelSerializer):
-    user = serializers.SlugRelatedField(read_only=True, slug_field='username')
-    # Проверить подписку на самого себя и дубль подписки
+    user = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username',
+        default=serializers.CurrentUserDefault()
+    )
+    following = serializers.SlugRelatedField(
+        slug_field='username',
+        queryset=User.objects.all()
+    )
 
     class Meta:
         fields = '__all__'
         model = Follow
         validators = [
             UniqueTogetherValidator(
-                User.objects.all(),
+                Follow.objects.all(),
                 ['user', 'following'])
         ]
+
+    def validate(self, data):
+        """ Запрет подписки на самого себя."""
+        if self.context['request'].user == data['following']:
+            raise serializers.ValidationError('Подписка на самого себя')
+        return data
+
+    def save(self, **kwargs):
+        """ Добавление дополнителного аргумента user,
+            по умолчанию это текущий пользователь."""
+        kwargs['user'] = self.fields['user'].get_default()
+        return super().save(**kwargs)

@@ -6,8 +6,11 @@ User = get_user_model()
 
 class Group(models.Model):
     title = models.CharField(max_length=200)
-    discription = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
     slug = models.SlugField(unique=True)
+
+    def __str__(self) -> str:
+        return f'Group: {self.title}'
 
 
 class Post(models.Model):
@@ -25,7 +28,7 @@ class Post(models.Model):
     )
 
     def __str__(self):
-        return self.text
+        return f'Post: {self.text}'
 
 
 class Comment(models.Model):
@@ -36,6 +39,9 @@ class Comment(models.Model):
     text = models.TextField()
     created = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
+
+    def __str__(self) -> str:
+        return f'Comment: {self.text},{self.post}'
 
 
 class Follow(models.Model):
@@ -58,6 +64,9 @@ class Follow(models.Model):
             ),
             models.CheckConstraint(
                 check=~models.Q(user=models.F('following')),
-                name='Проверка подписки на сомого себя'
+                name='Проверка подписки на самого себя'
             )
         ]
+
+    def __str__(self) -> str:
+        return f'User:{self.user} - Following:{self.following}'
