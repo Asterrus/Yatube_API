@@ -83,5 +83,6 @@ python3 manage.py migrate
 ```
 python3 manage.py runserver
 ```
-# О себе
-Дячук Роман
+### Автор проекта 
+* Роман Дячук   
+
