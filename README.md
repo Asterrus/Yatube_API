@@ -83,4 +83,4 @@ python3 manage.py migrate
 python3 manage.py runserver
 ```
 # О себе
-Дячук Роман, Python backend разработчик. Студент Яндекс Практикума.
+Дячук Роман
