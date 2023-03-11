@@ -5,9 +5,20 @@ API Yatabe позволяет делать запросы к русурсам **
 Ресурс **follows** отвечает за возможность подписки на пользователей.  
 Просмотр ресурсов доступен всем, создание и изменение доступно авторизованным пользователям.  
 Авторизация происходит с помощью joser.
-# Стек технологий сервиса
-    - Django
-    - Django Rest Framework
+### Технологии:
+![Python](https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue)
+![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=green)
+
+### Используемые пакеты:
+    *  Django==3.2.16
+    *  pytest==6.2.4
+    *  pytest-pythonpath==0.7.3
+    *  pytest-django==4.4.0
+    *  djangorestframework==3.12.4
+    *  djangorestframework-simplejwt==4.7.2
+    *  Pillow==9.3.0
+    *  PyJWT==2.1.0
+    *  requests==2.26.0
 ## Примеры запросов  
 Get запрос к ресурсу posts.  
 Ответ:  
